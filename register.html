@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Puzzle Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="assets/css/login.css" rel="stylesheet" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <style>
+        /* Basic styles for validation messages */
+        .error-text {
+            color: #ff4d4d;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <h1>Create Account</h1>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                <div id="username-error" class="error-text">Username must be at least 3 characters and contain only letters, numbers, and underscores</div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <div id="email-error" class="error-text">Please enter a valid email address</div>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <div id="password-error" class="error-text">Password must be at least 8 characters with uppercase, lowercase, and numbers</div>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn">Register</button>
+            </div>
+            <div class="auth-link">
+                <p>Already have an account? <a href="login.html">Login</a></p>
+            </div>
+        </form>
+        <div id="error-message" style="color: red; margin-top: 10px; display: none;"></div>
+    </div>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Reset error messages
+            document.querySelectorAll('.error-text').forEach(el => el.style.display = 'none');
+            document.getElementById('error-message').style.display = 'none';
+            
+            // Get form values
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            let hasError = false;
+            
+            // Validate username
+            if (username.length < 3) {
+                document.getElementById('username-error').style.display = 'block';
+                hasError = true;
+            }
+            
+            if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+                document.getElementById('username-error').style.display = 'block';
+                hasError = true;
+            }
+            
+            // Validate email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                document.getElementById('email-error').style.display = 'block';
+                hasError = true;
+            }
+            
+            // Validate password
+            if (password.length < 8) {
+                document.getElementById('password-error').style.display = 'block';
+                hasError = true;
+            }
+            
+            // Password strength validation
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasNumbers = /[0-9]/.test(password);
+            
+            if (!hasUpperCase || !hasLowerCase || !hasNumbers) {
+                document.getElementById('password-error').style.display = 'block';
+                hasError = true;
+            }
+            
+            // If validation fails, stop here
+            if (hasError) {
+                return;
+            }
+            
+            // Prepare to submit
+            const submitButton = document.querySelector('.btn');
+            submitButton.textContent = 'Creating Account...';
+            submitButton.disabled = true;
+            
+            const dataToSend = JSON.stringify({ username, email, password });
+            fetch('https://games.teluapp.org/8puzzle/backend/api/register.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: dataToSend
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Registration successful!');
+                    window.location.href = 'login.html';
+                } else {
+                    const errorMessage = document.getElementById('error-message');
+                    errorMessage.textContent = data.message || 'Registration failed. Please try again.';
+                    errorMessage.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const errorMessage = document.getElementById('error-message');
+                errorMessage.textContent = 'Registration failed. Please try again.';
+                errorMessage.style.display = 'block';
+            })
+            .finally(() => {
+                // Reset button state
+                submitButton.textContent = 'Register';
+                submitButton.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>

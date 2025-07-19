@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telkomzle - Player Profile - Telkomzle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/profile.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+</head>
+<body>
+    <!-- Navigation -->
+    <header class="header-unified">
+        <div class="header-content">
+            <a href="index.html" class="logo-title">
+                <i class="fas fa-puzzle-piece"></i>
+                <h1>Telkomzle</h1>
+            </a>
+            <nav class="nav-links">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="game.html" class="nav-link">Play Game</a>
+                <a href="profile.html" class="nav-link">Profile</a>
+                <a href="index.html" class="nav-link">Home</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Profile Content -->
+    <div class="profile-container">
+        <!-- Sidebar -->
+        <aside class="profile-sidebar">
+            <div class="profile-avatar" id="avatarInitials"></div>
+            <div class="profile-info">
+                <h2 class="profile-name" id="playerName">Loading...</h2>
+                <div class="rank-badge" id="playerRank">Loading rank...</div>
+                <div class="stats-list">
+                    <div class="stat-item">
+                        <span>Total Games</span>
+                        <strong id="totalGames">0</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>Best Score</span>
+                        <strong id="bestScore">0</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>Current Streak</span>
+                        <strong id="currentStreak">0</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>Win Rate</span>
+                        <strong id="winRate">0%</strong>
+                    </div>
+                    <!-- Logout Button -->
+                    <div class="stat-item">
+                        <button onclick="Auth.logout()" class="custom-logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Level Progress -->
+            <div class="level-card">
+                <div class="level-info">
+                    <h2>Level Progress</h2>
+                    <span id="levelDisplay">Level 0</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="levelProgress"></div>
+                </div>
+                <div id="xpInfo">0/1000 XP to next level</div>
+            </div>
+            
+            <!-- Activity Tracker -->
+            <div class="activity-card">
+                <h2>Daily Activity</h2>
+                <div class="activity-tracker" id="activityTracker"></div>
+            </div>
+
+            <!-- Stats Summary -->
+            <div class="stats-summary-card">
+                <h2>Performance Summary</h2>
+                <div class="stats-summary" id="statsSummary"></div>
+            </div>
+
+            <!-- Performance Chart -->
+            <div class="chart-card">
+                <h2>Performance History</h2>
+                <div style="position: relative; height: 400px;">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="achievements-section">
+                <h2>Achievements</h2>
+                <div class="achievements-grid" id="achievementsContainer">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Game History -->
+            <div class="history-card">
+                <div class="history-header">
+                    <h2>Recent Games</h2>
+                    <select id="historyFilter">
+                        <option value="all">All Games</option>
+                        <option value="best">Best Scores</option>
+                        <option value="recent">Recent Only</option>
+                    </select>
+                </div>
+                <table class="games-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Level</th>
+                            <th>Steps</th>
+                            <th>Time</th>
+                            <th>XP Earned</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gameHistoryTable">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/profile.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        if (!await Auth.checkAuth()) {
+            Auth.redirectToLogin();
+        }
+    });
+    </script>
+    <script>
+        // Prevent caching of this page
+        window.onpageshow = function(event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        };
+        
+        // Force authentication check on page load and visibility change
+        async function checkAuthStatus() {
+            if (!await Auth.checkAuth()) {
+                console.log('Auth check failed, redirecting to login...');
+                Auth.redirectToLogin();
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', checkAuthStatus);
+        document.addEventListener('visibilitychange', checkAuthStatus);
+        
+        // Add beforeunload event to clear session when leaving
+        window.addEventListener('beforeunload', function() {
+            localStorage.clear();
+            sessionStorage.clear();
+        });
+        </script>
+</body>
+</html>

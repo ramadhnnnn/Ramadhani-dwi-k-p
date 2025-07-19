@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puzzlr - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/puzzle.css">
+</head>
+<body>
+    <!-- Notification Containers -->
+    <div id="notification-container-achievement"></div>
+    <div id="notification-container-challenge"></div>
+
+    <div class="dashboard">
+        <header class="header-unified">
+            <div class="header-content">
+                <a href="index.html" class="logo-title">
+                    <i class="fas fa-puzzle-piece"></i>
+                    <h1>Telkomzle</h1>
+                </a>
+                <nav class="nav-links">
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                    <a href="game.html" class="nav-link">Play Game</a>
+                    <a href="profile.html" class="nav-link">Profile</a>
+                    <a href="index.html" class="nav-link">Home</a>
+                </nav>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- Stats Section -->
+            <div class="stats-section">
+                <div class="stats-card">
+                    <i class="fas fa-users"></i>
+                    <div class="stat-info">
+                        <h3>Total Players</h3>
+                        <p id="totalPlayers">0</p>
+                    </div>
+                </div>
+                <div class="stats-card">
+                    <i class="fas fa-trophy"></i>
+                    <div class="stat-info">
+                        <h3>Best Score</h3>
+                        <p id="highestScore">0</p>
+                    </div>
+                </div>
+                <div class="stats-card">
+                    <i class="fas fa-chart-line"></i>
+                    <div class="stat-info">
+                        <h3>Average Score</h3>
+                        <p id="averageScore">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard Section -->
+            <div class="leaderboard-section">
+                <div class="section-header">
+                    <i class="fas fa-crown"></i>
+                    <h2>Leaderboard</h2>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Player</th>
+                                <th>Difficulty</th>
+                                <th>Steps</th>
+                                <th>Time</th>
+                                <th>Achievements</th>
+                                <th>Streak</th>
+                                <th>Challenges</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Player Info Section -->
+            <div class="player-section">
+                <!-- Achievements Card -->
+                <div class="level-card">
+                    <div class="section-header">
+                        <i class="fas fa-star"></i>
+                        <h2>Achievements</h2>
+                    </div>
+                    <div class="achievements-grid" id="achievementsContainer">
+                        <!-- Achievement cards will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Weekly Challenge Card -->
+                <div class="challenge-card">
+                    <div class="section-header">
+                        <i class="fas fa-flag-checkered"></i>
+                        <h2>Weekly Challenge</h2>
+                    </div>
+                    <div class="challenge-info" id="challengeContainer">
+                        <!-- Challenge content will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Performance Chart Card -->
+                <div class="chart-card">
+                    <div class="section-header">
+                        <i class="fas fa-chart-bar"></i>
+                        <h2>Performance</h2>
+                    </div>
+                    <canvas id="scoreChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/dashboard.js"></script>
+</body>
+</html>

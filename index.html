@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telkomzle</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+    <link href="assets/css/index.css" rel="stylesheet" />
+    <!-- Add no-cache meta tags -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+</head>
+<body>
+    <div class="home-container">
+        <!-- Animasi -->
+        <div class="lottie-container">
+            <dotlottie-player 
+                src="https://lottie.host/622952f8-e75a-44d3-b829-8209fb49459f/RB4zULWPs8.lottie" 
+                background="transparent" 
+                speed="1" 
+                style="width: 100%; height: 100%" 
+                loop 
+                autoplay>
+            </dotlottie-player>
+        </div>
+        <h1 class="gradient-title">Telkomzle</h1>
+        <div class="btn-container">
+            <a href="game.html" class="btn">
+                <i class="fas fa-play"></i>
+                Play Game
+            </a>
+            <a href="dashboard.html" class="btn">
+                <i class="fas fa-chart-bar"></i>
+                Dashboard
+            </a>
+            <a href="profile.html" class="btn">
+                <i class="fas fa-user"></i>
+                Profile
+            </a>
+        </div>
+        <div class="stats-preview">
+            <div class="stat-item">
+                <div class="stat-value">5</div>
+                <div class="stat-label">Puzzles</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">1.2K</div>
+                <div class="stat-label">Players</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">4.8</div>
+                <div class="stat-label">Rating</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Original auth check script with enhanced logging -->
+    <script>
+        const API_BASE_URL = 'https://games.teluapp.org/8puzzle/backend/api';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Index page loaded, preparing to check authentication');
+            
+            // Check if the user just logged in
+            const justLoggedIn = sessionStorage.getItem('justLoggedIn');
+            if (justLoggedIn === 'true') {
+                console.log('User just logged in successfully, skipping immediate auth check');
+                sessionStorage.removeItem('justLoggedIn');
+                return;
+            }
+            
+            // Log existing cookies
+            console.log('Cookies on index page:', document.cookie);
+            
+            // Proceed with authentication check
+            checkAuthentication();
+        });
+        
+        async function checkAuthentication() {
+            try {
+                console.log('Checking authentication status...');
+                console.log('Auth check endpoint:', `${API_BASE_URL}/check_login.php`);
+                
+                const response = await fetch(`${API_BASE_URL}/check_login.php`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                console.log('Auth check status:', response.status);
+                
+                // Get raw response text first for debugging
+                const responseText = await response.text();
+                console.log('Raw auth check response:', responseText);
+                
+                try {
+                    // Try to parse as JSON
+                    const data = JSON.parse(responseText);
+                    console.log('Parsed auth check response:', data);
+                    
+                    if (data.status === 'error' || data.status !== 'success') {
+                        console.log('Not authenticated, redirecting to login');
+                        window.location.href = 'login.html?error=session_expired';
+                    } else {
+                        console.log('Authentication successful');
+                    }
+                } catch (jsonError) {
+                    // Handle invalid JSON response
+                    console.error('JSON parsing error:', jsonError);
+                    console.error('Response was not valid JSON, redirecting to login');
+                    window.location.href = 'login.html?error=invalid_response';
+                }
+            } catch (error) {
+                // Handle network errors
+                console.error('Network error during auth check:', error);
+                alert('Connection failed. Please check your internet connection.');
+            }
+        }
+    </script>
+    
+    <!-- Add functionality to log out -->
+    <script>
+        // Add this function to make logout accessible from the console for testing
+        async function logoutUser() {
+            try {
+                console.log('Starting logout process...');
+                
+                const response = await fetch(`${API_BASE_URL}/logout.php`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                console.log('Logout response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const responseText = await response.text();
+                console.log('Raw logout response:', responseText);
+                
+                try {
+                    const data = JSON.parse(responseText);
+                    console.log('Parsed logout response:', data);
+                    
+                    // Clear storage
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    
+                    console.log('Cookies before clearing:', document.cookie);
+                    
+                    // Clear cookies
+                    document.cookie.split(";").forEach(function(c) { 
+                        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/8puzzle");
+                    });
+                    
+                    console.log('Cookies after clearing:', document.cookie);
+                    
+                    // Redirect to login
+                    window.location.href = 'login.html?action=logout';
+                    
+                } catch (jsonError) {
+                    console.error('JSON parsing error:', jsonError);
+                    alert('Logout failed: Invalid server response');
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Logout failed: ' + error.message);
+            }
+        }
+        
+        // Add a global logout function that can be called from anywhere
+        window.logoutUser = logoutUser;
+    </script>
+</body>
+</html>

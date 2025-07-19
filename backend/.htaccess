@@ -1,0 +1,28 @@
+# Enable URL rewriting
+RewriteEngine On
+
+# Atur root directory ke folder 'public' jika Anda menggunakan struktur folder yang lebih bersih
+RewriteBase /
+
+# Mengatur file index utama
+DirectoryIndex index.php
+
+# Redirect ke HTTPS (jika sudah mengaktifkan SSL)
+#RewriteCond %{HTTPS} off
+#RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Mencegah akses langsung ke file .env atau file konfigurasi lainnya
+<FilesMatch "^\.">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Menghindari directory listing jika folder kosong
+Options -Indexes
+
+# Mengizinkan hanya akses dari server tertentu untuk API (misalnya hanya localhost)
+#<Files "api/*">
+#    Order Deny,Allow
+#    Deny from all
+#    Allow from 127.0.0.1
+#</Files>
